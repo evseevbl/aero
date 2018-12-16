@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration</title>
+</head>
+<body>
+	<h1>Registration counter</h1>
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ form.name.label() }}
+                    {{ form.name(disabled=True)}}
+                </div>
+                <div class="form-group">
+                    {{ form.surname.label() }}
+                    {{ form.surname() }}
+                </div>
+          		<div class="form-group">
+                    {{ form.passport.label() }}
+                    {{ form.passport() }}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.search() }}
+            </div>
+        </form>
+    </div>
+</body>
+</html>
