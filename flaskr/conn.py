@@ -7,6 +7,10 @@ class GroundService(object):
         self.dbw.connect()
         pass
 
+    def __del__(self):
+        self.dbw.disconnect()
+        print (self.id, 'connection closed')
+
 
 class Passenger(object):
     def __init__(self, dbid, name, surname, country, passport):
@@ -28,6 +32,7 @@ class DBWrapper(object):
         self.user = user
         self.password = password
         self.host = host
+        print('init db with id =', id(self))
 
 
     def connect(self):
