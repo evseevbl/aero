@@ -40,7 +40,7 @@ def create_app(test_config=None):
                     pg = Passenger(*list(person[0]))
                     form.name.data = pg.name
                     form.surname.data = pg.surname
-
+                    #123
             else:
                 print("No DB connection")
         return render_template("registration.html", form=form)
