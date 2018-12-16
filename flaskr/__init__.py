@@ -26,38 +26,55 @@ def create_app(test_config=None):
 
     @app.route("/register", methods=['GET', 'POST'])
     def registration():
+        print("CALLED REGISTER")
+
+        if g.found:
+            g.found = False
+            return render_template("finish.html", msg="done")
         form = Registration()
         if form.validate_on_submit():
             print(form.name.data)
             print(form.surname.data)
             print(form.passport.data)
-            print('g=', type(g))
             if hasattr(g, 'dbw'):
                 desk = RegistrationDesk(100500, g.dbw)
                 desk.dbw.connect()
                 person = desk.find_by_passport(form.passport.data)
+                print('query DB')
                 if person is not None and len(person) != 0:
                     pg = Passenger(*list(person[0]))
                     form.name.data = pg.name
                     form.surname.data = pg.surname
+                    print("RET 1")
+                    g.found = True
+                    g.uid = pg.passport
+                    return render_template("register.html", form=form, msg="", found=True)
                 else:
                     form.name.data = ""
                     form.surname.data = ""
+                    print("RET 2")
+                    return render_template("search.html", form=form, msg="", found=False)
             else:
                 print("No DB connection")
-        return render_template("registration.html", form=form)
+        return render_template("search.html", form=form, msg="", found=False)
 
     @app.route("/finish", methods=['GET', 'POST'])
     def finish():
+        print("CALLED FINISH")
+        form = Registration()
+        if form.validate_on_submit():
+            print(form.name.data)
+            print(form.surname.data)
+            print(form.passport.data)
         msg = "Moving Forward..."
-        request.form.
         return render_template('finish.html', msg=msg)
 
-    print("gonna init APP")
     from . import db
     db.init_app(app)
     ctx = app.app_context()
     ctx.g.dbw = db.get_db()
+    ctx.g.found = False
+    ctx.g.uid = -1
     ctx.g.ls = ["CZ5900", "AR2321", "VS2544"]
     ctx.push()
 
