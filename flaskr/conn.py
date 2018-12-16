@@ -16,8 +16,12 @@ class RegistrationDesk(GroundService):
     def __init__(self, code, dbw):
         super().__init__(code, dbw)
 
-    def register_passenger(self, passenger, flight):
-        self.dbw.query("INSERT .....")
+    def register_passenger(self, passport, flight, status="ok"):
+        print('REGISTER', passport, flight)
+        self.dbw.query(
+            "INSERT INTO epassenger(passport_id, counter_reg, status, flight) VALUES (%s, %s, %s, %s)",
+            (passport, str(self.code), status, flight)
+        )
 
     def find_by_passport(self, passport):
         passport = str(passport)
@@ -53,7 +57,11 @@ class DBWrapper(object):
 
     def query(self, query, args):
         self.cur.execute(query, args)
-        ret = self.cur.fetchall()
+        try:
+            ret = self.cur.fetchall()
+        except psycopg2.ProgrammingError as e:
+            print(e)
+            ret = None
         self.conn.commit()
         return ret
 
