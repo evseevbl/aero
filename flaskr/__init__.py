@@ -32,6 +32,12 @@ def create_app(test_config=None):
         print(form.surname.data)
         print(form.passport.data)
         print(form.flight.data)
+        if g.first:
+            g.first = False
+            return render_template("search.html", form=form, msg="provide passport number and hit Search", found=False)
+
+        if not hasattr(g, 'found'):
+            return render_template("search.html", form=form, msg="provide passport number and hit Search", found=False)
         if g.found:
             print("INSERT USER")
             g.found = False
@@ -63,13 +69,14 @@ def create_app(test_config=None):
 
     @app.route("/finish", methods=['GET', 'POST'])
     def finish():
+        g.first = True
         print("CALLED FINISH")
         form = Registration()
         if form.validate_on_submit():
             print(form.name.data)
             print(form.surname.data)
             print(form.passport.data)
-        msg = "Moving Forward..."
+        msg = "passenger registration finished..."
         return render_template('finish.html', msg=msg)
 
     from . import db
@@ -80,6 +87,7 @@ def create_app(test_config=None):
     ctx.g.desk.dbw.connect()
     ctx.g.found = False
     ctx.g.uid = -1
+    ctx.g.first = True
     ctx.g.flights = []
     for f in ["1052", "1053", "1059", "1056"]:
         ctx.g.flights.append((f, f))
